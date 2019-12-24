@@ -1,0 +1,40 @@
+version: "3"
+services:
+    list_world:
+        build: ./list_world
+        restart: always
+        ports:
+            - "3000:3000"
+        volumes:
+        - ./list_world:/list_world
+        - /list_world/node_modules
+        links:
+            - api
+        networks:
+            - diplomskinetwork
+    api:
+        build: ./api
+        restart: always
+        ports:
+            - "9000:9000"
+        volumes:
+            - ./api:/api
+            - /api/node_modules
+        depends_on:
+            - mongodb
+        networks:
+            - diplomskinetwork
+    mongodb:
+        image: mongo
+        restart: always
+        container_name: mongodb
+        volumes:
+            - ./data-node:/data/db
+        ports:
+            - 27017:27017
+        command: mongod --noauth
+        networks:
+            - diplomskinetwork
+networks:
+    diplomskinetwork:
+        driver: bridge
